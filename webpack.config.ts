@@ -4,10 +4,14 @@ import CopyWebpackPlugin = require('copy-webpack-plugin')
 import path = require('path')
 
 // webpack.Configuration.mode must be 'production' or 'development' in type system.
-const MODE = process.env.NODE_ENV === 'production'
-  ? 'production' : 'development'
+const MODE =
+  process.env.NODE_ENV === 'production' ? 'production' : 'development'
 
 const resolve = (s: string): string => path.resolve(__dirname, s)
+
+function hoge() {
+  return 1
+}
 
 const common: webpack.Configuration = {
   devtool: 'source-map',
@@ -61,8 +65,10 @@ const renderer: webpack.Configuration = {
         test: /\.elm$/,
         use: {
           loader: 'elm-webpack-loader',
-          options: MODE === 'production'
-            ? {} : { debug: true, warn: true, verbose: true }
+          options:
+            MODE === 'production'
+              ? {}
+              : { debug: true, warn: true, verbose: true }
         },
         exclude: [/elm-stuff/, /node_modules/]
       },
@@ -81,7 +87,4 @@ const renderer: webpack.Configuration = {
   target: 'electron-renderer'
 }
 
-export default [
-  merge(common, main),
-  merge(common, renderer)
-]
+export default [merge(common, main), merge(common, renderer)]
