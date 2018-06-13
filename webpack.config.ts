@@ -2,21 +2,21 @@ import webpack = require('webpack')
 import merge = require('webpack-merge')
 import CopyWebpackPlugin = require('copy-webpack-plugin')
 import path = require('path')
+const WriteFilePlugin = require('write-file-webpack-plugin')
 
 // webpack.Configuration.mode must be 'production' or 'development' in type system.
 const MODE =
   process.env.NODE_ENV === 'production' ? 'production' : 'development'
 
-const resolve = (s: string): string => path.resolve(__dirname, s)
+const DEV_SERVER_PORT = process.env.DEV_SERVER_PORT || 8080
+console.log(DEV_SERVER_PORT)
 
-function hoge() {
-  return 1
-}
+const resolve = (s: string): string => path.resolve(__dirname, s)
 
 const common: webpack.Configuration = {
   devtool: 'source-map',
   resolve: {
-    extensions: ['.ts']
+    extensions: ['.js', '.ts']
   },
   output: {
     filename: '[name].js',
@@ -43,6 +43,7 @@ const main: webpack.Configuration = {
     __dirname: false
   },
   plugins: [
+    new WriteFilePlugin(),
     new CopyWebpackPlugin([
       {
         from: resolve('package.json'),
@@ -58,6 +59,10 @@ const renderer: webpack.Configuration = {
   },
   entry: {
     renderer: './renderer/index.ts'
+  },
+  devServer: {
+    inline: true,
+    port: DEV_SERVER_PORT
   },
   module: {
     rules: [
